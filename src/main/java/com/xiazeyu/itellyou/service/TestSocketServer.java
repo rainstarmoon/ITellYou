@@ -36,7 +36,7 @@ public class TestSocketServer {
      * 连接关闭调用的方法
      */
     @OnClose
-    public void onClose(Session session) {
+    public void onClose(Session session, @PathParam("userId") String userId) {
         log.info("Session ID = {},连接关闭.用户id = {}", session.getId(), userId);
         sessionConcurrentSet.remove(session);
         log.info("当前连接数量:{}", sessionConcurrentSet.size());
