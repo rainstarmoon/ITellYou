@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<script>
+
+    var socket;
+    if (typeof (WebSocket) == "undefined") {
+        console.log("遗憾：您的浏览器不支持WebSocket");
+    } else {
+        console.log("恭喜：您的浏览器支持WebSocket");
+
+        //实现化WebSocket对象
+        //指定要连接的服务器地址与端口建立连接
+        //注意ws、wss使用不同的端口。我使用自签名的证书测试，
+        //无法使用wss，浏览器打开WebSocket时报错
+        //ws对应http、wss对应https。
+        socket = new WebSocket("ws://localhost:8080/ws/server/1");
+        //连接打开事件
+        socket.onopen = function () {
+            console.log("Socket 已打开");
+            socket.send("消息发送测试(From Client)");
+        };
+        //收到消息事件
+        socket.onmessage = function (msg) {
+            console.log(msg.data);
+        };
+        //连接关闭事件
+        socket.onclose = function () {
+            console.log("Socket已关闭");
+        };
+        //发生了错误事件
+        socket.onerror = function () {
+            alert("Socket发生了错误");
+        }
+        //窗口关闭时，关闭连接
+        window.unload = function () {
+            socket.close();
+        };
+    }
+
+    function sendMessage() {
+        var message = $("#message").val();
+        if (!message) {
+            console.log("messsage为空");
+            return;
+        }
+        $.ajax({
+            //请求方式
+            type: "get",
+            //请求的媒体类型
+            //contentType: "application/json;charset=UTF-8",
+            //请求地址
+            url: "/ws/api/sendAll",
+            data: {
+                "message": message
+            },
+            //请求成功
+            success: function (result) {
+                console.log(result);
+            },
+            //请求失败，包含具体的错误信息
+            error: function (e) {
+                console.log(e);
+                alert("请求错误");
+            }
+        })
+    }
+
+</script>
+
+<body>
+
+<div>
+    <button id="send" onclick="sendMessage()">发送</button>
+    <br/>
+    <input type="text" id="message" placeholder="待群发消息" style="width:50%"/>
+</div>
+
+</body>
+</html>
