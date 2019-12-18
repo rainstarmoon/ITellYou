@@ -1,4 +1,4 @@
-package com.xiazeyu.itellyou.service;
+package com.xiazeyu.itellyou.websocket;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
